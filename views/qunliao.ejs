@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      li {
+        list-style: none;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font: 13px Helvetica, Arial;
+      }
+
+      #form {
+        background: #000;
+        padding: 3px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+
+      #form input {
+        border: 0;
+        padding: 10px;
+        width: 90%;
+        margin-right: 0.5%;
+      }
+
+      #form button {
+        width: 9%;
+        background: rgb(130, 224, 255);
+        border: none;
+        padding: 10px;
+      }
+
+      #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      #messages li {
+        padding: 5px 10px;
+        font-size: 20px;
+        color: rgb(0, 177, 106);
+      }
+
+      #messages li:nth-child(odd) {
+        background: #eee;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      #friendlist {
+        font-size: 20px;
+      }
+    </style>
+    <link
+      href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <style>
+      #username {
+        padding: 10px;
+        font-size: 9px;
+      }
+
+      body {
+        background-image: url("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3317343903,55874794&fm=26&gp=0.jpg");
+      }
+
+      #form {
+        font-family: "新宋体";
+        background: #babfcd;
+        border-radius: 5px;
+        width: 75%;
+      }
+
+      #form input {
+        width: 72%;
+      }
+
+      h1 {
+        padding: 16px;
+        background-color: #babfcd;
+        font-size: 25px;
+        margin: 0px;
+        margin-bottom: 27px;
+      }
+
+      #master {
+        font-size: 25px;
+      }
+
+      #m {
+        width: 1088px;
+      }
+
+      #form button {
+        width: 19%;
+        border-radius: 5px;
+        background-color: #848ba0;
+        font-size: 21px;
+        padding: 5px;
+      }
+
+      .msgbox {
+        border-radius: 10px;
+      }
+
+      .list {
+        border: 5px solid lightpink;
+      }
+
+      li {
+        border-radius: 5px;
+      }
+
+      li button {
+        margin-top: 20px;
+      }
+
+      a {
+        font-size: 21px;
+        color: #babfcd;
+      }
+
+      .nav > li > a {
+        padding: 30px 15px;
+      }
+
+      #messages li {
+        color: #ea4d3c;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>群聊1</h1>
+    <div class="container-fluid">
+      <div class="row msgbox">
+        <div
+          class="col-sm-3 col-md-2 sidebar list "
+          style="background-color:#f2f2f2; border-radius:5px;padding-top:25px;height:1079px; text-align: center "
+        >
+          <div style="text-align: center">
+            <p id="master" class="name">昵称:<%=name%></p>
+          </div>
+          <div style="border: 1px solid #ffffff "></div>
+          <ul class="nav nav-sidebar">
+            <li class="active">
+              <a href="qunliao">群聊1<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="active">
+              <a href="/">离开群聊<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="active">
+              <a href="#">设置<span class="sr-only">(current)</span></a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-10  main">
+          <div class="box">
+            <ul id="messages"></ul>
+            <form id="form" method="get">
+              <select class="btn" name="userchat" id="username">
+                <option class="btn" id="qlpeople" value="2">群聊</option>
+              </select>
+              <input id="m" autocomplete="off" />
+              <button>发送</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Button trigger modal -->
+  </body>
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io.connect("/chat");
+    //当发送按钮提交表单的时候触发
+    $("#form").submit(function() {
+      if ($("#m").val() == "") {
+        alert("内容不能为空");
+      } else {
+        var msg = "<%=name%>" + ":" + $("#m").val();
+        $("#m").val("");
+      }
+      socket.emit("join", msg);
+      return false;
+    });
+    //发送内容给服务器
+    socket.on("message", function(msg) {
+      addLine(msg);
+      console.log("我接受到了来自服务器的群聊天信息" + msg);
+    });
+    //在页面添加聊天信息
+    function addLine(msg) {
+      $("#messages").append($("<li>").html(msg));
+    }
+  </script>
+</html>
